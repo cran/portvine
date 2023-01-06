@@ -134,8 +134,8 @@ estimate_dependence_and_risk <- function(combined_residuals_dt,
         dtplyr::lazy_dt() %>%
         select("asset", "copula_scale_resid", "row_num") %>%
         tidyr::pivot_wider(
-          names_from = .data$asset,
-          values_from = .data$copula_scale_resid
+          names_from = "asset",
+          values_from = "copula_scale_resid"
         ) %>%
         select(-"row_num") %>%
         as.data.frame()
@@ -231,6 +231,8 @@ estimate_dependence_and_risk <- function(combined_residuals_dt,
                     ],
                     p = sample,
                     skew = trans_vals[["skew"]][trans_vals[["asset"]] ==
+                      .data$asset],
+                    shape = trans_vals[["shape"]][trans_vals[["asset"]] ==
                       .data$asset]
                   )
             ) %>%
@@ -243,8 +245,8 @@ estimate_dependence_and_risk <- function(combined_residuals_dt,
             ungroup() %>%
             select(-"weight") %>%
             tidyr::pivot_wider(
-              names_from = .data$asset,
-              values_from = .data$sample
+              names_from = "asset",
+              values_from = "sample"
             ) %>%
             arrange(.data$sample_id) %>%
             # retrieve the portfolio value as well as the conditioning vars if

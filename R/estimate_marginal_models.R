@@ -80,6 +80,9 @@ estimate_marginal_models <- function(data,
         data.table::as.data.table()
       # extract the conditional innovations distribution
       roll_distribution <- roll@model$spec@model$modeldesc$distribution
+      #extract the ARMA and GARCH order considered
+      arma_order <- roll@model$spec@model$modelinc[1:3]
+      garch_order <- roll@model$spec@model$modelinc[8:9]
       # get the residuals for each window and store all relevant residuals
       # for the current asset in one data.table whose columns are specified
       # below
@@ -90,6 +93,8 @@ estimate_marginal_models <- function(data,
           # extract the coefficients for the window
           coefs <- roll@model$coef[[window]]$coef[, 1]
           spec <- rugarch::ugarchspec(
+            mean.model = list(armaOrder = arma_order[2:3], include.mean = (arma_order[1]>0)),
+            variance.model =  list(garchOrder = garch_order), 
             distribution.model = roll_distribution,
             fixed.pars = coefs
           )
@@ -125,10 +130,10 @@ estimate_marginal_models <- function(data,
               .data$row_num >= (start_window + n_vine_train)) %>%
             arrange(.data$row_num) %>%
             mutate(resid = (.data$Realized - .data$Mu) / .data$Sigma) %>%
-            select(.data$resid,
-              shape = .data$Shape, skew = .data$Skew,
-              mu = .data$Mu, sigma = .data$Sigma,
-              .data$row_num
+            select("resid",
+              shape = "Shape", skew = "Skew",
+              mu = "Mu", sigma = "Sigma",
+              "row_num"
             ) %>%
             data.table::as.data.table() %>%
             rbind(window_residuals_fitted) %>%
