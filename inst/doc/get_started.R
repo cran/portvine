@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -177,7 +177,7 @@ marg_resid_viz_list <- function(
     }, USE.NAMES = TRUE, simplify = FALSE)
 }
 
-## ---- results='hide'----------------------------------------------------------
+## ----results='hide'-----------------------------------------------------------
 uncond_residual_viz <- marg_resid_viz_list(uncond_risk_roll)
 uncond_residual_viz_squared <- marg_resid_viz_list(
   uncond_risk_roll, squared = TRUE
